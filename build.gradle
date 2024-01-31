@@ -35,7 +35,7 @@ project.ext {
      (OperatingSystem.MAC_OSX):
      ["/Applications/Unity/Unity.app/Contents/MacOS/Unity"] +
      (new FileNameFinder()).getFileNames(
-       "/", "Applications/Unity/Hub/Editor/*/Unity.app/Contents/MacOS/Unity"),
+       "/", "Applications/Unity/Hub/Editor/2021.3.32f1/Unity.app/Contents/MacOS/Unity"),
      (OperatingSystem.WINDOWS):
      ["\\Program Files\\Unity\\Editor\\Unity.exe"] +
      (new FileNameFinder()).getFileNames(
@@ -46,7 +46,11 @@ project.ext {
   // The Unity editor is required to package the plug-in.
   for (defaultUnityPath in defaultUnityPaths) {
     unityExe = findFileProperty("UNITY_EXE", new File(defaultUnityPath), false)
-    if (unityExe != null && unityExe.exists()) break;
+    print("Searching " + defaultUnityPath + "  (" + unityExe + ")" + "\n")
+    if (unityExe != null && unityExe.exists()) {
+      print("Found it, exiting loop\n")
+      break;
+    }
   }
   if (unityExe == null || !unityExe.exists()) {
     unityExe = findFileInPath(unityExe.name)
@@ -255,7 +259,7 @@ project.ext {
   // Directory for testing.
   testDir = new File(scriptDirectory, "test_output")
   // Version of the plugin (update this with CHANGELOG.md on each release).
-  pluginVersion = "1.2.178"
+  pluginVersion = "1.2.179"
   // Directory that contains the template plugin.
   // Files under this directory are copied into the staging area for the
   // plugin.
@@ -315,8 +319,9 @@ project.ext {
   symbolDatabaseExtension = pdbSupported ? ".pdb" : ".dll.mdb"
   // Changelog file.
   changelog = new File(scriptDirectory, "CHANGELOG.md")
-  pythonBootstrapDir = new File(externalToolsDir, "python_bootstrap")
-  pythonBinDir = new File(new File(pythonBootstrapDir, "python"), "bin")
+  //pythonBootstrapDir = new File(externalToolsDir, "python_bootstrap")
+  //pythonBinDir = new File(new File(pythonBootstrapDir, "python"), "bin")
+  pythonBinDir = new File("/opt/homebrew/bin")
   // Python binary after it has been bootstrapped.
   pythonExe = new File(pythonBinDir, "python3")
   // Pip binary after it has been bootstrapped.
@@ -329,9 +334,9 @@ project.ext {
 
 // Configure com.jetbrains.python.envs to bootstrap a Python install.
 envs {
-  bootstrapDirectory = project.ext.pythonBootstrapDir
-  envsDirectory = new File(project.ext.buildDir, "python_envs")
-  python "python", "3.9.5"
+  //bootstrapDirectory = project.ext.pythonBootstrapDir
+  //envsDirectory = new File(project.ext.buildDir, "python_envs")
+  //python "python", "3.9.5"
 }
 
 /*

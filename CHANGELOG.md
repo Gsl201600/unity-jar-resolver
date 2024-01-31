@@ -1,3 +1,6 @@
+# Version 1.2.179 - Jan 31, 2024
+* Android Resolver - Adds logic to enable gradle templates automatically.
+
 # Version 1.2.178 - Dec 20, 2023
 * Added [OpenUPM support](https://openupm.com/packages/com.google.external-dependency-manager/).
 
