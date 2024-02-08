@@ -645,7 +645,7 @@ namespace Google {
             }
             DirectoryInfo di = new DirectoryInfo(path);
             var parentFolder = Path.GetDirectoryName(path);
-            if (!CreateFolder(parentFolder)) {
+            if (!CreateFolder(parentFolder, logger)) {
                 return false;
             }
 
@@ -670,7 +670,15 @@ namespace Google {
                     LogLevel.Info);
             }
 
-            return Directory.CreateDirectory(path) != null;
+            // TODO REMOVE THIS
+            UnityEngine.Debug.LogWarning("=-=-=-=-=  Falling back to Directory.CreateDirectory for: " + path);
+
+            DirectoryInfo dirInfo = Directory.CreateDirectory(path);
+            if (dirInfo != null) {
+                UnityEngine.Debug.LogWarning("=-=-=-=-=  dirInfo.Exists: " + dirInfo.Exists);
+                dirInfo.Refresh();
+            }
+            return dirInfo != null && dirInfo.Exists;
         }
 
         /// <summary>

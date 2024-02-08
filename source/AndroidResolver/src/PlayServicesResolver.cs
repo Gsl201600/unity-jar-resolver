@@ -2502,7 +2502,9 @@ namespace GooglePlayServices {
 
             PlayServicesResolver.Log(String.Format("Copying {0} to {1}",
                     sourceLocation, targetLocation),
-                    level: LogLevel.Verbose);
+                    level: LogLevel.Info);
+
+            PlayServicesResolver.Log("Does the target directory(" + targetDir + ") exist? " + Directory.Exists(targetDir), level: LogLevel.Info);
 
             // Use File.Copy() instead of AssetDatabase.CopyAsset() to prevent copying meta data.
             try {
