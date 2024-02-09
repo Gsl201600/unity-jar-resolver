@@ -1764,11 +1764,27 @@ namespace GooglePlayServices {
             if (firstJob) ExecuteNextResolveJob();
         }
 
+        /// <summary>
+        /// Ensures that the mainTemplate.gradle and gradle.properties files are present in the project,
+        /// creating them via the Unity Editor's template files if needed.
+        /// </summary>
+        /// <returns>True if both files are present.</returns>
         private static bool EnableGradleTemplates() {
             return GradleTemplateResolver.EnsureGradleTemplateEnabled(GradleTemplateResolver.GradleTemplateFilename) &&
             GradleTemplateResolver.EnsureGradleTemplateEnabled(GradleTemplateResolver.GradlePropertiesTemplateFilename);
         }
 
+        /// <summary>
+        /// Resolve dependencies after checking if mainTemplate.gradle is enabled (or previously disabled).
+        /// </summary>
+        /// <param name="resolutionComplete">Delegate called when resolution is complete
+        /// with a parameter that indicates whether it succeeded or failed.</param>
+        /// <param name="forceResolution">Whether resolution should be executed when no dependencies
+        /// have changed.  This is useful if a dependency specifies a wildcard in the version
+        /// expression.</param>
+        /// <param name="isAutoResolveJob">Whether this is an auto-resolution job.</param>
+        /// <param name="closeWindowOnCompletion">Whether to unconditionally close the resolution
+        /// window when complete.</param>
         private static void ResolveUnsafeAfterMainTemplateCheck(Action<bool> resolutionComplete,
                                                                 bool forceResolution,
                                                                 bool isAutoResolveJob,
@@ -1787,9 +1803,7 @@ namespace GooglePlayServices {
             // desired default behavior. If Users want to preserve the old method, they can save their
             // SettingsObject with the UserRejectedGradleUpgrade option enabled.
             if (ExecutionEnvironment.InBatchMode || !PlayServicesResolver.FindLabeledAssets().Any()) {
-                Debug.Log("Didn't find assets, so copying over file");
                 EnableGradleTemplates();
-
                 ResolveUnsafeAfterJetifierCheck(resolutionComplete, forceResolution, isAutoResolveJob, closeWindowOnCompletion);
                 return;
             }
@@ -1811,6 +1825,7 @@ namespace GooglePlayServices {
                             break;
                     }
 
+                    // Either way, proceed with the resolution.
                     ResolveUnsafeAfterJetifierCheck(resolutionComplete, forceResolution, isAutoResolveJob, closeWindowOnCompletion);
                 });
         }
@@ -2502,9 +2517,7 @@ namespace GooglePlayServices {
 
             PlayServicesResolver.Log(String.Format("Copying {0} to {1}",
                     sourceLocation, targetLocation),
-                    level: LogLevel.Info);
-
-            PlayServicesResolver.Log("Does the target directory(" + targetDir + ") exist? " + Directory.Exists(targetDir), level: LogLevel.Info);
+                    level: LogLevel.Verbose);
 
             // Use File.Copy() instead of AssetDatabase.CopyAsset() to prevent copying meta data.
             try {
